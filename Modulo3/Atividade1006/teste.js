@@ -41,3 +41,5 @@ function cadastrarFuncionario() {
 		})
 	})
 }
+
+console.log('mudança')
