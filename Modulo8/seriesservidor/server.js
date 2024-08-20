@@ -9,14 +9,17 @@ function processarRequest(requisicao) {
 
     switch(acao) {
         case "LISTAR":
+
             return dados
+
         case 'ADICIONAR':
+            
             const novaSerie = { id: dados.length + 1, nome, ano }
 
             dados.push(novaSerie)
 
             return { mensagem: 'Série adicionada', novaSerie }
-            
+
         case 'CONSULTAR':
             
             return dados.find(data => data.nome === nome) || { mensagem: 'Série não encontrada'}
