@@ -16,11 +16,17 @@ function processarRequest(requisicao) {
             dados.push(novaSerie)
 
             return { mensagem: 'Série adicionada', novaSerie }
+            
         case 'CONSULTAR':
+            
             return dados.find(data => data.nome === nome) || { mensagem: 'Série não encontrada'}
+
         case 'REMOVER':
-            const index = dados.findIndex(data => data.id === id) || { mensagem: 'Não encontrado'}
+            
+        const index = dados.findIndex(data => data.id === id) || { mensagem: 'Não encontrado'}
+            
             return dados.splice(index, 1)
+
         default:
             return { mensagem: "Ação Invalida" }
     }
