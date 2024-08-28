@@ -7,7 +7,15 @@ app.get('/', (req, res) => {
 })
 
 app.get('/outro', (req, res) => {
-    res.send('Outra coisa')
+    res.send('Boas vindas voce me achou')
+})
+
+app.get('/info', (req, res) => {
+    res.send('Esse site foi feito usando express!')
+})
+
+app.get('*', (req, res) => {
+    res.status(404).send('Pagina não encontrada')
 })
 
 app.listen(port , () => {
