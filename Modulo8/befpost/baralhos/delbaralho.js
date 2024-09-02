@@ -10,12 +10,6 @@ function delbaralho(req, res) {
 
     const baralhodel = baralhos.splice(index, 1)[0] 
 
-    // flashcards.forEach(flashcard, index => {
-    //     if (flashcard.idBaralho == id) {
-    //     flashcards.splice(index, 1);
-    //     }
-    // })
-
     res.status(200).send({mensagem: 'Deletado', baralho: baralhodel})
 }
 
