@@ -180,6 +180,69 @@ app.get('/estudantes', async (req, res) => {
 
 // Atualizar estudante
 
+async function attEstudante(id, nome, matricula, curso, ano) {
+    try {
+        const estudanteatt = await Estudante.findByIdAndUpdate(
+            id,
+            {nome, matricula, curso, ano},
+            {new: true, runValidators: true}
+        )
+        return estudanteatt
+    } catch (erro) {
+        console.error('Não foi possivel atualizar', erro)
+        throw erro
+    }
+}
+
+app.put('/estudantes/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        const { nome, matricula, curso, ano} = req.body
+        const estudanteatt = await attEstudante(
+            id,
+            nome,
+            matricula,
+            curso,
+            ano
+        )
+        if (estudanteatt) {
+            res.status(200).json({mensagem: 'Estudante Atualizado', Estudante: estudanteatt})
+        } else {
+            res.status(500).json('Estudante não encontrado')
+        }
+    } catch (erro) {
+        res.status(500).json({mensagem: 'Erro ao atualizar', erro: erro.message})
+    }        
+})
+
+// deletar Estudante
+
+async function delestudante(id) {
+    try {
+        const estudantedel = await Estudante.findByIdAndDelete(id)
+        return estudantedel
+    } catch(erro) {
+        console.error('Erro ao deletar', erro)
+        throw erro
+    }
+}
+
+app.delete('/estudantes/:id', async (req,res) => {
+    try{
+        const { id } = req.params
+        const estudantedel = await delestudante(id)
+        
+        if(delestudante) {
+            res.status(200).json({mensagem: 'Estudante deletado', estudante: estudantedel})
+        } else {
+            res.status(404).json('Estudante não encontredo')
+        }
+    } catch(erro) {
+        res.status(500).json('Erro ao deletar')
+    }
+})
+
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
