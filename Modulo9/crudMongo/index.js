@@ -11,6 +11,8 @@ mongoose.connect('mongodb://localhost:27017/livraria')
         console.error('Erro ao conectar', erro)
     })
 
+// Livros
+
 let esquemaLivro = new mongoose.Schema({
     titulo: {type: String, required: true},
     autor: {type: String, required: true},
@@ -97,6 +99,7 @@ app.put('/livros/:id', async (req, res) => {
     }
 })
 
+// deletar livro
 async function dellivro(id) {
     try {
         const livroDeletado = await Livro.findByIdAndDelete(id)
@@ -122,6 +125,41 @@ app.delete('/livros/:id', async (req, res) => {
     }
 })
 
+// Estudantes
+
+let esquemaEstudante = new mongoose.Schema({
+    nome: {type: String, required: true},
+    matricula: {type: Number, required: true},
+    curso: {type: String, required: true},
+    ano: {type: Number, required: true}
+})
+
+
+const Estudante = mongoose.model('Estudante', esquemaEstudante)
+
+// criar estudante
+
+async function criarEstudante( nome, matricula, curso, ano) {
+    try {
+        const novoEstudante = new Estudante({ nome, matricula, curso, ano})
+        return await novoEstudante.save()
+    } catch(erro) {
+        console.error('Estudante não adicionado', erro)
+    }
+}
+
+app.post('/estudantes', async (req, res) => {
+    try {
+        const { nome, matricula, curso, ano} = req.body
+        const novoEstudante = await criarEstudante(nome, matricula, curso, ano)
+
+        res.status(200).json({mensagem: 'Estudante adicionado', Estudante: novoEstudante})
+    } catch (erro) {
+        res.status(500).json({mensagem: 'Erro ao adicionar', erro: erro.message})
+    }
+})
+
+//
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
