@@ -242,6 +242,121 @@ app.delete('/estudantes/:id', async (req,res) => {
     }
 })
 
+// ALUGUEIS
+
+let esquemaAluguel = new mongoose.Schema({
+    idLivro: {type: Number, required: true},
+    idEstudante: {type: Number, required: true},
+    dataAluguel: {type: String, required: true},
+    dataDevolucao: {type: String, required: true}
+})
+
+const Aluguel = mongoose.model('Aluguel', esquemaAluguel)
+
+// criar aluguel
+
+async function criarAluguel( idLivro, idEstudante, dataAluguel, dataDevolucao) {
+    try{
+        const novoAluguel = new Aluguel({ idLivro, idEstudante, dataAluguel, dataDevolucao })
+        return await novoAluguel.save()
+    } catch(erro) {
+        console.error('Aluguel não encontrado', erro)
+        throw erro
+    }
+}
+
+app.post('/alugueis', async (req, res) => {
+    try {
+        const { idLivro, idEstudante, dataAluguel, dataDevolucao } = req.body
+        const novoAluguel = await criarAluguel(idLivro, idEstudante, dataAluguel, dataDevolucao)
+    
+        res.status(200).json({mensagem: 'Aluguel adicionado', Aluguel: novoAluguel})
+    } catch(erro) {
+        res.status(500).json({mensagem: 'Erro ao adicionar', erro: erro.message})
+    }
+})
+
+// Listar alugueis
+
+async function lisatrAlugueis() {
+    try {
+        return await Aluguel.find()
+    } catch(erro) {
+        console.error('Nenhum aluguel adicionado', erro)
+    }
+}
+
+app.get('/alugueis', async (req, res) => {
+    try{
+        const alugueis = await lisatrAlugueis()
+        res.status(200).json(alugueis)
+    } catch(erro) {
+        res.status(500).json({mensagem: 'Erro ao listar alugueis', erro: erro.message})
+    }
+})
+
+// atualizar aluguel
+
+async function attAluguel(id, idLivro, idEstudante, dataAluguel, dataDevolucao) {
+    try {
+        const aluguelatt = await Aluguel.findByIdAndUpdate(
+            id,
+            {idLivro, idEstudante, dataAluguel, dataDevolucao},
+            {new: true, runValidators: true}
+        )
+        return aluguelatt
+    } catch(erro) {
+        console.error('Não foi possivel atualizar', erro)
+    }
+}
+
+app.put('/alugueis/:id', async (req, res) => {
+    try{
+        const { id } = req.params
+        const { idLivro, idEstudante, dataAluguel, dataDevolucao} = req.body
+        const aluguelatt = await attAluguel(
+            id,
+            idLivro, 
+            idEstudante, 
+            dataAluguel, 
+            dataDevolucao
+        )
+        if (aluguelatt) {
+            res.status(200).json({mensagem: 'Aluguel atualizado', Aluguel: aluguelatt})
+        } else {
+            res.status(404).json('Aluguel não encontrado')
+        } 
+    } catch(erro) {
+        res.status(500).json({mensagem: 'Não foi possivel atualizar', erro: erro.message})
+    }
+})
+
+// deletar aluguel
+
+async function delaluguel(id) {
+    try {
+        const alugueldel = await Aluguel.findByIdAndDelete(id)
+        return alugueldel
+    } catch(erro) {
+        console.error('Erro ao dletar', erro)
+        throw erro
+    }   
+}
+
+app.delete("/alugueis/:id", async (req, res) => {
+    try {
+        const { id } = req.params
+        const alugueldel = await delaluguel(id)
+
+        if(delaluguel) {
+            res.status(200).json({mensagem: 'Aluguel deletado', aluguel: alugueldel})
+        } else {
+            res.status(404).json('Aluguel não encontrado')
+        }
+    } catch(erro) {
+        res.status(500).json('Erro ao deletar')
+    }
+})
 
 const port = 3000;
 app.listen(port, () => {
