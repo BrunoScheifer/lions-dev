@@ -159,7 +159,27 @@ app.post('/estudantes', async (req, res) => {
     }
 })
 
-//
+// Listar estudantes
+
+async function listarestudantes() {
+    try {
+        return await Estudante.find()
+    } catch(erro) {
+        console.error("Nenhum estudante encontrado", erro)
+    }
+}
+
+app.get('/estudantes', async (req, res) => {
+    try {
+        const estudantes = await listarestudantes()
+        res.status(200).json(estudantes)
+    } catch(erro) {
+        res.status(500).json({mensagem: 'Nenhum estudante encontrado', erro: erro.message})
+    }
+})
+
+// Atualizar estudante
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
