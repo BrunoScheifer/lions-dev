@@ -97,6 +97,31 @@ app.put('/livros/:id', async (req, res) => {
     }
 })
 
+async function dellivro(id) {
+    try {
+        const livroDeletado = await Livro.findByIdAndDelete(id)
+        return livroDeletado
+    } catch(erro) {
+        console.error('Não foi possivel deletar!', erro)
+        throw erro
+    }
+}
+
+app.delete('/livros/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        const livroDeletado = await dellivro(id)
+
+        if (dellivro) {
+            res.status(200).json({mensagem: 'Livro deletado', livro: livroDeletado})
+        } else {
+            res.status(404).json('Livro não encontrado')
+        } 
+    } catch(erro) {
+        res.status(500).json('Erro ao deletar!!')
+    }
+})
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
